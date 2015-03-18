@@ -63,6 +63,8 @@ case "$1" in
 		start
 		;;
 	*)
-		echo $"Usage; $0 {start|stop|status|restart}"
+		echo $"Usage: $0 {start|stop|status|restart}"
 		exit 2
 esac
+
+exit 0
