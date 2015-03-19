@@ -3,7 +3,7 @@
 # Daemon Name: thowis_scallentire_chat_d
 #
 # chkconfig: - 58 74
-# description: Controls Thowis Scallentire Chat
+# description: Controls Thowis Scallentire Chat Server
 
 # Programmer: Lewis Scott
 

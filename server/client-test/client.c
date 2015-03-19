@@ -72,6 +72,7 @@ int main(int argc, char *argv[])
 			printf("Connection severed...\n");
 			fflush(stdout);
 			close(sd);
+			getchar();
 			return 0;
 		}
 	}
