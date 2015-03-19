@@ -2,18 +2,27 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <arpa/inet.h>
 #include <errno.h>
 #include <strings.h>
+#include "ipc.h"
 
 #define PORT 5156
 #define MAX_BACKLOG 5
+#define MES_Q_IDENT (key_t)0x4A
+#define SHMEM_IDENT (key_t)0xE2
+#define SHMEM_SIZE	1024
 
 int main(int argc, char *argv[])
 {
 	int sd, client_sd;
 	struct sockaddr_in server, client;
 	int client_len = sizeof(client);
+
+	int msq_id = openMessageQueue(MES_Q_IDENT);
+	int shmem_id;
+	void *shmem_p = openSharedMemory(SHMEM_IDENT, SHMEM_SIZE, &shmem_id);
 	
 	if((sd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
 	{
@@ -48,5 +57,7 @@ int main(int argc, char *argv[])
 	}
 	
 	close(sd);
+	closeSharedMemory(shmem_id);
+	closeMessageQueue(msq_id);
 	return 0;
 }
