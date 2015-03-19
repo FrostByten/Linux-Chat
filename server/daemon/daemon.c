@@ -7,16 +7,16 @@
 #include <unistd.h>
 #include <syslog.h>
 
-#define NAME "Thowis_Scallentire_Chat"
-
+//#define NAME "Thowis_Scallentire_Chat"
+#define NAME "daemontest"
 void end(int, char*);
 
 int main(int argc, char *argv[])
 {
 	pid_t pid;
 
-	setlogmask(LOG_UPTO(LOG_ERR));
-	openlog(NAME, LOG_CONS | LOG_NDELAY | LOG_PERROR | LOG_PID, LOG_USER);
+	setlogmask(LOG_UPTO(LOG_CRIT));
+	openlog(NULL, LOG_CONS | LOG_NDELAY | LOG_PERROR | LOG_PID, LOG_USER);
 	
 	syslog(LOG_INFO, "Starting...");
 	
@@ -35,7 +35,8 @@ int main(int argc, char *argv[])
 	
 	if((chdir("/")) < 0)
 		end(1, "Unable to change directories!");
-	
+
+	printf("here\n");	
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
@@ -47,7 +48,10 @@ int main(int argc, char *argv[])
 void end(int status, char *message)
 {
 	if(message != NULL)
-		syslog(LOG_ERR, message);
+	{
+		syslog(LOG_ERR, "%s: %m", message);
+		printf("%s\n", message);
+	}	
 	syslog(LOG_INFO, "Stopping...");
 	
 	closelog();
