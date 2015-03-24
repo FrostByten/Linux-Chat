@@ -207,7 +207,7 @@ void client_disconnect(int i)
 		if(clients[j].fd == events[i].data.fd)
 		{
 			syslog(LOG_INFO, "Connection closed: %s\n", inet_ntoa(clients[j].addr.sin_addr));
-			printf("[%s]: Disconnected", clients[j].nick==NULL?inet_ntoa(clients[j].addr.sin_addr):clients[j].nick);
+			printf("[%s]: Disconnected\n", clients[j].nick==NULL?inet_ntoa(clients[j].addr.sin_addr):clients[j].nick);
 			clients[j].fd = 0;
 			discon = j;
 			if(clients[j].nick != NULL)
@@ -246,19 +246,30 @@ int read_from_client(int i)
 	int count;
 	char buffer[READ_BUFF_SIZE];
 
-	count = read(events[i].data.fd, buffer, sizeof(buffer));
-	if(count == -1)
+	for(;;)
 	{
-		if(errno != EAGAIN) //Error reading, disconnect
+		count = read(events[i].data.fd, buffer, sizeof(buffer));
+		if(count == -1)
 		{
-			perror("Reading from client");
+			if(errno != EAGAIN) // Error reading, disconnect
+			{
+				perror("Reading from client");
+				return 1;
+			}
+			else // More to read
+			{
+				printf("[Socket #%d]: Got EAGAIN on read\n", events[i].data.fd);
+				continue;
+			}
+		}
+		else if(count == 0) // Connection closed
 			return 1;
+		else
+		{
+			handle_message(events[i].data.fd, buffer, count);
+			break;
 		}
 	}
-	else if(count == 0) // Connection closed
-		return 1;
-	else
-		handle_message(events[i].data.fd, buffer, count);
 
 	return 0;
 }
