@@ -17,7 +17,7 @@ void *openSharedMemory(key_t ident, int size, int *shmid)
 {
 	void *p = NULL;
 
-	if((*shmid = shmget(ident, size, 0600 | IPC_CREAT | IPC_EXCL)) < 0)
+	if((*shmid = shmget(ident, size, 0600 | IPC_CREAT)) < 0)
 	{
 		perror("Can't open shared memory");
 		exit(1);

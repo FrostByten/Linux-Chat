@@ -14,4 +14,5 @@ void *openSharedMemory(key_t, int, int*);
 void closeMessageQueue(key_t);
 void closeSharedMemory(int);
 
+
 #endif

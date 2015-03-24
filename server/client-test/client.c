@@ -19,16 +19,19 @@ pid_t pid;
 int main(int argc, char *argv[])
 {
 	pid = getpid();
-	int sd;
+	int sd, port;
 	struct sockaddr_in server;
 	struct hostent *hp;
 	char buf[BUFLEN];
 	
-	if(argc != 2)
+	if(argc < 2)
 	{
-		printf("Usage: %s {ip address}\n", argv[0]);
+		printf("Usage: %s [ip address] {port}\n", argv[0]);
 		exit(1);
 	}
+
+	port = argc==3?atoi(argv[2]):PORT;
+
 	
 	if(signal(SIGINT, sigHandler) == SIG_ERR)
 	{
@@ -44,7 +47,7 @@ int main(int argc, char *argv[])
 	
 	bzero((char *)&server, sizeof(struct sockaddr_in));
 	server.sin_family = AF_INET;
-	server.sin_port = htons(PORT);
+	server.sin_port = htons(port);
 	server.sin_addr.s_addr = inet_addr(argv[1]);
 	
 	if(connect(sd, (struct sockaddr *)&server, sizeof(server)) == -1)
@@ -52,7 +55,7 @@ int main(int argc, char *argv[])
 		perror("Can't connect to server");
 		exit(1);
 	}
-	printf("Connected to: %s:%d\n", argv[1], PORT);
+	printf("Connected to: %s:%d\n", argv[1], port);
 	
 	pid_t t = fork();
 	if(t == 0) // Child will receive
@@ -105,5 +108,6 @@ void sigHandler(int signo)
 	{
 		printf("\nCaught interrupt signal, dying...\n");
 		kill(pid, SIGKILL);
+		exit(1);
 	}
 }
