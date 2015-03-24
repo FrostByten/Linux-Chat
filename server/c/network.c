@@ -176,6 +176,9 @@ void accept_client(int i, int sd)
 		printf("[%s]: Connected\n", inet_ntoa(clients[current].addr.sin_addr));
 
 		current++;
+
+		for(l = 0; l < current - 1; ++l)
+			send_message(client_sd, CONNECTION, (clients[l].nick==NULL)?inet_ntoa(clients[l].addr.sin_addr):clients[l].nick, strlen((clients[l].nick==NULL)?inet_ntoa(clients[l].addr.sin_addr):clients[l].nick));
 	}
 }
 
