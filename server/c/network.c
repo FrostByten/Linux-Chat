@@ -152,9 +152,8 @@ void send_message(int fd, char type, char *data, int length)
 void handle_message(int fd, char* buf, int len)
 {
 	char type = buf[0];
-	write(1, buf, len);
-
 	char d; // Index of client received from
+
 	for(d = 0; d < current; ++d)
 		if(clients[d].fd == fd)
 			buf[0] = d;
@@ -162,12 +161,34 @@ void handle_message(int fd, char* buf, int len)
 	switch(type)
 	{
 		case CHAT:
+		{
 			for(d = 0; d < current; ++d)
 			{
 				if(clients[d].fd != fd)
 					send_message(clients[d].fd, CHAT, buf, len);
 			}
+
+			printf("[%s]: %s\n", clients[buf[0]].nick==NULL?inet_ntoa(clients[buf[0]].addr.sin_addr):clients[buf[0]].nick, buf+1);
 			break;
+		}
+		case NAME_CHANGE:
+		{
+			printf("[%s]: Changed name to: %s\n", clients[buf[0]].nick==NULL?inet_ntoa(clients[buf[0]].addr.sin_addr):clients[buf[0]].nick, buf+1);
+
+			if(clients[d].nick != NULL)
+				free(clients[d].nick);
+
+			clients[d].nick = (char*)malloc(len-1);
+				memcpy(clients[d].nick, buf + 1, len - 1);
+
+			for(d = 0; d < current; ++d)
+			{
+				if(clients[d].fd != fd)
+					send_message(clients[d].fd, NAME_CHANGE, buf, len);
+			}
+
+			break;
+		}
 		default:
 			break;
 	}
