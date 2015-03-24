@@ -23,7 +23,7 @@
 
 #include "network.h"
 
-int efd;
+int efd, flog;
 client_entry clients[MAX_CLIENTS];
 short current = 0;
 struct epoll_event event;
@@ -57,6 +57,9 @@ void startAccept(int sd)
 		perror("Unable to create epoll fd");
 		exit(1);
 	}
+
+	if((flog = open("./log.txt", O_RDWR | O_CREAT | O_APPEND, 0666)) == -1)
+		perror("Unable to open log file");
 
 	event.data.fd = sd;
 	event.events = EPOLLIN | EPOLLET;
@@ -170,7 +173,7 @@ void accept_client(int i, int sd)
 			perror("Cannot add client to epoll watch list");
 
 		syslog(LOG_INFO, "Connection from: %s\n", inet_ntoa(client.sin_addr));
-		printf("[%s]: Connected\n", inet_ntoa(clients[current].addr.sin_addr));
+		writeLog("Connected", current);
 
 		current++;
 
@@ -207,7 +210,7 @@ void client_disconnect(int i)
 		if(clients[j].fd == events[i].data.fd)
 		{
 			syslog(LOG_INFO, "Connection closed: %s\n", inet_ntoa(clients[j].addr.sin_addr));
-			printf("[%s]: Disconnected\n", clients[j].nick==NULL?inet_ntoa(clients[j].addr.sin_addr):clients[j].nick);
+			writeLog("Disconnected", j);
 			clients[j].fd = 0;
 			discon = j;
 			if(clients[j].nick != NULL)
@@ -266,7 +269,13 @@ int read_from_client(int i)
 			return 1;
 		else
 		{
-			handle_message(events[i].data.fd, buffer, count);
+			if(count >= 2)
+				handle_message(events[i].data.fd, buffer, count);
+			else
+			{
+				printf("[Socket #%d]: Received corrupt command...\n", events[i].data.fd);
+				syslog(LOG_ERR, "Received fragmented command from fd #%d", events[i].data.fd);
+			}
 			break;
 		}
 	}
@@ -349,7 +358,7 @@ void handle_message(int fd, char *buf, int len)
 					send_message(clients[d].fd, CHAT, buf, len);
 			}
 
-			printf("[%s]: \"%s\"\n", clients[buf[0]].nick==NULL?inet_ntoa(clients[buf[0]].addr.sin_addr):clients[buf[0]].nick, buf+1);
+			writeLog(buf + 1, buf[0]);
 			break;
 		}
 		case WHISPER:
@@ -364,7 +373,7 @@ void handle_message(int fd, char *buf, int len)
 		}
 		case NAME_CHANGE:
 		{
-			printf("[%s]: Changed name to: %s\n", clients[buf[0]].nick==NULL?inet_ntoa(clients[buf[0]].addr.sin_addr):clients[buf[0]].nick, buf+1);
+			writeLog("Changed name", buf[0]);
 
 			if(clients[d].nick != NULL)
 				free(clients[d].nick);
@@ -383,4 +392,38 @@ void handle_message(int fd, char *buf, int len)
 		default:
 			break;
 	}
+}
+
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: writeLog
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Lewis Scott
+--
+-- PROGRAMMER: Lewis Scott
+--
+-- INTERFACE: void writeLog(char *towrite)
+--
+-- PARAMETERS:	char *towrite: The data to write to the log file
+--
+-- RETURNS: void.
+--
+-- NOTES:
+----------------------------------------------------------------------------------------------------------------------*/
+void writeLog(char *towrite, int idx)
+{
+	time_t t = time(NULL);
+	struct tm tm = *localtime(&t);
+
+	char *str = (char*)malloc(LOG_MAX);
+
+	sprintf(str, "%d/%d/%d %d:%d:%d [%s]: %s\n", tm.tm_mon + 1, 
+		tm.tm_mday, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec,
+		clients[idx].nick==NULL?inet_ntoa(clients[idx].addr.sin_addr):clients[idx].nick, towrite);
+
+	printf("%s", str);
+	write(flog, str, strlen(str));
 }

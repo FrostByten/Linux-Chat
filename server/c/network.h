@@ -27,17 +27,20 @@
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
-#include <sys/types.h>
+#include <sys/epoll.h>
+#include <sys/stat.h>
 #include <signal.h>
 #include <errno.h>
 #include <strings.h>
 #include <string.h>
-#include <sys/epoll.h>
+#include <fcntl.h>
+#include <time.h>
 #include "shared.h"
 #include "server.h"
 
 #define MAX_EVENTS 64
 #define READ_BUFF_SIZE 512
+#define LOG_MAX 512
 
 void startAccept(int);
 void set_sock_noblock(int);
@@ -46,5 +49,6 @@ void client_disconnect(int);
 int read_from_client(int);
 void send_message(int, char, char*, int);
 void handle_message(int, char*, int);
+void writeLog(char*, int);
 
 #endif 
