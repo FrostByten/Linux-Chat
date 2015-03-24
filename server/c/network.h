@@ -1,3 +1,26 @@
+/*------------------------------------------------------------------------------------------------------------------
+-- SOURCE FILE: network.h - Performs the network-specific functions for the server
+--
+-- PROGRAM: Thowis Scallentire Chat
+--
+-- FUNCTIONS:
+-- void startAccept(int);
+-- void set_sock_noblock(int);
+-- void accept_client(int, int);
+-- void client_disconnect(int);
+-- int read_from_client(int);
+-- void send_message(int, char, char*, int);
+-- void handle_message(int, char*, int);
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Lewis Scott
+--
+-- PROGRAMMER: Lewis Scott
+----------------------------------------------------------------------------------------------------------------------*/
+
 #ifndef NETWORK_H
 #define NETWORK_H
 
