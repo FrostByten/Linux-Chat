@@ -77,7 +77,8 @@ void accept_client(int i, int sd)
 		int l;
 		for(l = 0; l < current; ++l)
 		{
-			send_message(clients[current].fd, CHAT, "Some guy connected", strlen("Some guy connected"));
+			//send_message(clients[current].fd, CHAT, "Some guy connected", strlen("Some guy connected"));
+			send_message(clients[current].fd, CONNECTION, inet_ntoa(client.sin_addr), strlen(inet_ntoa(client.sin_addr)));
 		}
 
 		clients[current].nick = NULL;
@@ -91,7 +92,7 @@ void accept_client(int i, int sd)
 			perror("Cannot add client to epoll watch list");
 
 		syslog(LOG_INFO, "Connection from: %s\n", inet_ntoa(client.sin_addr));
-		printf("Connection from: %s\n", inet_ntoa(clients[current].addr.sin_addr));
+		printf("[%s]: Connected\n", inet_ntoa(clients[current].addr.sin_addr));
 
 		current++;
 	}
@@ -104,14 +105,15 @@ void client_disconnect(int i)
 	{
 		if(clients[j].fd == events[i].data.fd)
 		{
-			printf("%s disconnected", inet_ntoa(clients[j].addr.sin_addr));
+			printf("[%s]: Disconnected", clients[j].nick==NULL?inet_ntoa(clients[j].addr.sin_addr):clients[j].nick);
 			clients[j].fd = 0;
 			if(clients[j].nick != NULL)
 				free(clients[j].nick);
 		}
 		else
 		{
-			send_message(clients[current].fd, CHAT, "Some guy disconnected", strlen("Some guy disconnected"));
+			//send_message(clients[current].fd, CHAT, "Some guy disconnected", strlen("Some guy disconnected"));
+			send_message(clients[current].fd, DISCONNECTION, "", 0);
 		}
 	}
 	close(events[i].data.fd);
@@ -145,7 +147,10 @@ void send_message(int fd, char type, char *data, int length)
 	buf[0] = type;
 
 	memcpy(&buf[1], data, length);
-	send(fd, buf, length+1, 0);
+
+	if(fd != 0)
+		send(fd, buf, length+1, 0);
+
 	free(buf);
 }
 
