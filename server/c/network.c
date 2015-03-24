@@ -157,10 +157,7 @@ void accept_client(int i, int sd)
 	{
 		int l;
 		for(l = 0; l < current; ++l)
-		{
-			//send_message(clients[current].fd, CHAT, "Some guy connected", strlen("Some guy connected"));
 			send_message(clients[current].fd, CONNECTION, inet_ntoa(client.sin_addr), strlen(inet_ntoa(client.sin_addr)));
-		}
 
 		clients[current].nick = NULL;
 		clients[current].fd = client_sd;
@@ -203,22 +200,25 @@ void accept_client(int i, int sd)
 ----------------------------------------------------------------------------------------------------------------------*/
 void client_disconnect(int i)
 {
-	int j;
+	char j;
+	char discon = -1;
 	for(j = 0; j < current; ++j)
 	{
 		if(clients[j].fd == events[i].data.fd)
 		{
+			syslog(LOG_INFO, "Connection closed: %s\n", inet_ntoa(clients[j].addr.sin_addr));
 			printf("[%s]: Disconnected", clients[j].nick==NULL?inet_ntoa(clients[j].addr.sin_addr):clients[j].nick);
 			clients[j].fd = 0;
+			discon = j;
 			if(clients[j].nick != NULL)
 				free(clients[j].nick);
 		}
-		else
-		{
-			//send_message(clients[current].fd, CHAT, "Some guy disconnected", strlen("Some guy disconnected"));
-			send_message(clients[current].fd, DISCONNECTION, "", 0);
-		}
 	}
+
+	if(discon != -1)
+		for(j = 0; j < current; ++j)
+			send_message(clients[current].fd, DISCONNECTION, &discon, 1);
+
 	close(events[i].data.fd);
 }
 
@@ -338,7 +338,17 @@ void handle_message(int fd, char *buf, int len)
 					send_message(clients[d].fd, CHAT, buf, len);
 			}
 
-			printf("[%s]: %s\n", clients[buf[0]].nick==NULL?inet_ntoa(clients[buf[0]].addr.sin_addr):clients[buf[0]].nick, buf+1);
+			printf("[%s]: \"%s\"\n", clients[buf[0]].nick==NULL?inet_ntoa(clients[buf[0]].addr.sin_addr):clients[buf[0]].nick, buf+1);
+			break;
+		}
+		case WHISPER:
+		{
+			int to_whisp = buf[0];
+			buf[0] = d;
+
+			if(to_whisp <= current)
+				send_message(clients[to_whisp].fd, WHISPER, buf, len);
+
 			break;
 		}
 		case NAME_CHANGE:
