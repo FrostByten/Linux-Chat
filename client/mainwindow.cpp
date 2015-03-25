@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
     users = new QString[BUFSIZE];
-    usersend = 0;
+    usersend = 1;
     connected = false;
 
     ui->disconnectButton->setEnabled(false);

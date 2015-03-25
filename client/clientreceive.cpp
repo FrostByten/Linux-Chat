@@ -25,6 +25,26 @@
 
 #include "clientreceive.h"
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: ClientReceive
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Thomas Tallentire
+--
+-- PROGRAMMER: Thomas Tallentire
+--
+-- INTERFACE: ClientReceive::ClientReceive()
+--
+-- PARAMETERS:	void
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Client Receive class constructor. Sets up connects.
+----------------------------------------------------------------------------------------------------------------------*/
 ClientReceive::ClientReceive()
 {
     connect(&receiveThread, SIGNAL(finished()), SLOT(deleteLater()));
@@ -32,22 +52,61 @@ ClientReceive::ClientReceive()
     connect(&receiveThread, SIGNAL(started()), SLOT(init()));
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: ~ClientReceive
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Thomas Tallentire
+--
+-- PROGRAMMER: Thomas Tallentire
+--
+-- INTERFACE: ClientReceive::~ClientReceive()
+--
+-- PARAMETERS:	void
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Client Receive class destructor.
+----------------------------------------------------------------------------------------------------------------------*/
 ClientReceive::~ClientReceive()
 {
 
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: init
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Thomas Tallentire
+--
+-- PROGRAMMER: Thomas Tallentire
+--
+-- INTERFACE: void ClientReceive::init()
+--
+-- PARAMETERS:	void
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Initializes the socket descriptor and connects it to the server. Runs on thread start.
+----------------------------------------------------------------------------------------------------------------------*/
 void ClientReceive::init()
 {
-    int flags;
     if ((sd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
         perror("Cannot create socket");
         exit(1);
     }
-    flags = fcntl(sd, F_GETFL, 0);
+    /*flags = fcntl(sd, F_GETFL, 0);
     flags &= !O_NONBLOCK;
-    fcntl(sd, F_SETFL, flags);
+    fcntl(sd, F_SETFL, flags);*/
     if (::connect (sd, (struct sockaddr *)&server, (socklen_t)sizeof(server)) == -1)
     {
         fprintf(stderr, "Can't connect to server\n");
@@ -59,6 +118,27 @@ void ClientReceive::init()
     receive();
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: setNetwork
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Thomas Tallentire
+--
+-- PROGRAMMER: Thomas Tallentire
+--
+-- INTERFACE: bool ClientReceive::setNetwork(char *host, char *port)
+--
+-- PARAMETERS:	host - IP in dotted decimal notation
+--              port - Port number.
+--
+-- RETURNS: bool - If the network information is valid or not.
+--
+-- NOTES:
+-- Validates the network information. Starts the receiving thread.
+----------------------------------------------------------------------------------------------------------------------*/
 bool ClientReceive::setNetwork(char *host, char *port)
 {
     int p;
@@ -83,12 +163,53 @@ bool ClientReceive::setNetwork(char *host, char *port)
     return true;
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: getSocket
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Thomas Tallentire
+--
+-- PROGRAMMER: Thomas Tallentire
+--
+-- INTERFACE: int ClientReceive::getSocket()
+--
+-- PARAMETERS:	void
+--
+-- RETURNS: int - The socket descriptor
+--
+-- NOTES:
+-- Returns the socket descriptor, sets receiving to true.
+----------------------------------------------------------------------------------------------------------------------*/
 int ClientReceive::getSocket()
 {
     receiving = true;
     return sd;
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: receive
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Thomas Tallentire
+--
+-- PROGRAMMER: Thomas Tallentire
+--
+-- INTERFACE: void ClientReceive::receive()
+--
+-- PARAMETERS:	void
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Loops forever trying to read from the socket. When a message is received, the first character
+-- is read to determine the type of message received.
+----------------------------------------------------------------------------------------------------------------------*/
 void ClientReceive::receive()
 {
     char receiveBuf[BUFSIZE];
@@ -129,30 +250,58 @@ void ClientReceive::receive()
     close(sd);
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: namechange
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Thomas Tallentire
+--
+-- PROGRAMMER: Thomas Tallentire
+--
+-- INTERFACE: void ClientReceive::namechange(char *buf)
+--
+-- PARAMETERS:	buf - The message buffer contaning the user and their new name.
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Extracts the name and position of the user whose name has been changed.
+----------------------------------------------------------------------------------------------------------------------*/
 void ClientReceive::namechange(char *buf)
 {
-    QString str = str = QString::fromLocal8Bit(buf);
     int pos = -1;
     QString newName;
-    std::string value = "";
 
-    for (QString::iterator it = str.begin(); it != str.end(); it++)
-    {
-        if (it == NULL)
-            break;
-        if (*it != ' ')
-        {
-            value += (*it).toLatin1();
-        }
-        else
-        {
-            pos = atoi(value.c_str());
-        }
-    }
-    newName = QString::fromStdString(value);
+    pos = (int)buf[0];
+    memcpy(buf, buf+1, BUFSIZE-2);
+    newName = QString::fromLocal8Bit(buf);
+
     emit userChanged(newName, pos);
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: userRemove
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Thomas Tallentire
+--
+-- PROGRAMMER: Thomas Tallentire
+--
+-- INTERFACE: void ClientReceive::userRemove(char *buf)
+--
+-- PARAMETERS:	buf - The message buffer contaning the user position.
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- Extracts the name and position of the user whose name has been changed.
+----------------------------------------------------------------------------------------------------------------------*/
 void ClientReceive::userRemove(char *buf)
 {
     QString str = str = QString::fromLocal8Bit(buf);
@@ -178,6 +327,26 @@ void ClientReceive::userRemove(char *buf)
     emit userRemoved(pos);
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: setReceiving
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Thomas Tallentire
+--
+-- PROGRAMMER: Thomas Tallentire
+--
+-- INTERFACE: void ClientReceive::setReceiving(bool val = false)
+--
+-- PARAMETERS:	val - The value to set receiving to.
+--
+-- RETURNS: void
+--
+-- NOTES:
+-- End receiving.
+----------------------------------------------------------------------------------------------------------------------*/
 void ClientReceive::setReceiving(bool val = false)
 {
     receiving = val;
