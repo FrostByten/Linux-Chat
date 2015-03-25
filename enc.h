@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-//#define MAX_BUF 256
+#define MAX_BUF 256
 #define CHAR_BITS 8
 
-void encrypt(char *buffer, int len, char *key, int k_len, char *key2, int k2_len); 
+void encrypt(char*, int, char*, int, char*, int); 
