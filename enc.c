@@ -17,22 +17,6 @@
 
 #include "enc.h"
 
-int main()
-{
-	char *str = (char*)malloc(MAX_BUF);
-	int num = 0;
-
-	printf("Enter a string: ");
-
-	getline(&str, (size_t*)&num, stdin);
-
-	printf("Original string:  %s", str);
-	encrypt(str, strlen(str), "lelel", 6, "hue", 4);
-	printf("Encrypted string: %s\n", str);
-	encrypt(str, strlen(str), "lelel", 6, "hue", 4);
-	printf("De-coded string:  %s\n", str);
-}
-
 /*------------------------------------------------------------------------------------------------------------------
 -- FUNCTION: encrypt
 --
@@ -71,6 +55,6 @@ void encrypt(char *lek, int key, char *sce, int v, char *hippitus, int kks)
 	chr+=hippitus??(buffer??);??>
 	lep /=v;chr /=kks;??>chr=((chr<<0x3)??!chr>>(0x20-03));
 		for(buffer=0;buffer<key;++buffer)??<
-	lek??(buffer??)??'=buffer%02==0x0?lep:chr;??>lep+=lek??(0x0??)/03;
-				chr-=(lep/2+';');
+	lek??(buffer??)??'=buffer%02==0x0?lep:chr;//??>lep+=lek??(0x0??)/03;
+				//chr-=(lep/2+';');
 }
