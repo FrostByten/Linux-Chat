@@ -82,7 +82,7 @@ void MainWindow::refreshUsers()
 
 void MainWindow::on_sendButton_clicked()
 {
-    QString text = CHAT + name + ui->textEdit->toPlainText();
+    QString text = CHAT + ui->textEdit->toPlainText();
     chatmodel->appendRow(new QStandardItem(QString("You:\t") + ui->textEdit->toPlainText()));
 
     clientsend->sendtext(text);
@@ -113,10 +113,11 @@ void MainWindow::on_networkButton_clicked()
 void MainWindow::on_setnameButton_clicked()
 {
     QString str;
+
     name = ui->plainTextEdit_3->toPlainText();
     if (connected)
     {
-        str = NAME_CHANGE + " ";
+        str = NAME_CHANGE;
         str += name;
         clientsend->sendtext(str);
     }
@@ -125,6 +126,13 @@ void MainWindow::on_setnameButton_clicked()
 void MainWindow::on_disconnectButton_clicked()
 {
     ui->networkButton->setEnabled(true);
-    connected = false;;
+    //connected = false;
     clientreceive->setReceiving(false);
 }
+
+// Ignore. Won't compile without these for some reason
+/*void MainWindow::on_pushButton_clicked(){}
+void MainWindow::on_pushButton_2_clicked(){}
+void MainWindow::on_pushButton_3_clicked(){}
+void MainWindow::on_pushButton_4_clicked(){}
+void MainWindow::on_disconnectButton_2_clicked(){}*/

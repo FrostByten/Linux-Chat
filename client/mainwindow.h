@@ -28,21 +28,17 @@ public:
     QString name;
 
 private slots:
-    void on_pushButton_clicked();
     void addtext(QString);
-    void adduser(QString);
-    void removeuser(int);
-    void changeuser(QString, int);
-    void on_pushButton_2_clicked();
-    void on_pushButton_3_clicked();
 
-    void on_pushButton_4_clicked();
+    void adduser(QString);
+
+    void removeuser(int);
+
+    void changeuser(QString, int);
 
     void on_sendButton_clicked();
 
     void on_networkButton_clicked();
-
-    void on_disconnectButton_2_clicked();
 
     void on_setnameButton_clicked();
 

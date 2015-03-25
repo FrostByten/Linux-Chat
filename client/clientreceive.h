@@ -13,6 +13,7 @@
 #include <strings.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include "mainwindow.h"
 
 #define BUFSIZE 1024

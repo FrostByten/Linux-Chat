@@ -16,11 +16,15 @@ ClientReceive::~ClientReceive()
 
 void ClientReceive::init()
 {
+    int flags;
     if ((sd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
         perror("Cannot create socket");
         exit(1);
     }
+    flags = fcntl(sd, F_GETFL, 0);
+    flags &= !O_NONBLOCK;
+    fcntl(sd, F_SETFL, flags);
     if (::connect (sd, (struct sockaddr *)&server, (socklen_t)sizeof(server)) == -1)
     {
         fprintf(stderr, "Can't connect to server\n");
@@ -66,14 +70,16 @@ void ClientReceive::receive()
 {
     char receiveBuf[BUFSIZE];
     QString str;
+    int val;
 
     while(receiving)
     {
-        if (recv (sd, receiveBuf, BUFSIZE, 0) == -1)
+        if ((val = read(sd, receiveBuf, BUFSIZE)) /*(sd, receiveBuf, BUFSIZE, 0))*/ == -1)
         {
             emit textAdded(QString("Error, Receive failed"));
             break;
         }
+        printf("Text received %d\n", val);
         switch (receiveBuf[0])
         {
         case (CONNECTION):
@@ -93,6 +99,9 @@ void ClientReceive::receive()
             memcpy(receiveBuf,receiveBuf+1, BUFSIZE-1);
             userRemove(receiveBuf);
             break;
+        default:
+            sleep(1);
+            printf("Default\n");
         }
         memset(receiveBuf, 0, BUFSIZE);
     }
