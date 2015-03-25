@@ -1,3 +1,26 @@
+/*------------------------------------------------------------------------------------------------------------------
+-- SOURCE FILE: network.c - Performs the network-specific functions for the server
+--
+-- PROGRAM: Thowis Scallentire Chat
+--
+-- FUNCTIONS:
+-- void startAccept(int);
+-- void set_sock_noblock(int);
+-- void accept_client(int, int);
+-- void client_disconnect(int);
+-- int read_from_client(int);
+-- void send_message(int, char, char*, int);
+-- void handle_message(int, char*, int);
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Lewis Scott
+--
+-- PROGRAMMER: Lewis Scott
+----------------------------------------------------------------------------------------------------------------------*/
+
 #include "network.h"
 
 int efd;
@@ -6,6 +29,25 @@ short current = 0;
 struct epoll_event event;
 struct epoll_event *events;
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: startAccept
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Lewis Scott
+--
+-- PROGRAMMER: Lewis Scott
+--
+-- INTERFACE: void startAccept(int sd)
+--
+-- PARAMETERS:	int sd:		The socket to accept on
+--
+-- RETURNS: void.
+--
+-- NOTES:
+----------------------------------------------------------------------------------------------------------------------*/
 void startAccept(int sd)
 {
 	set_sock_noblock(sd);
@@ -57,6 +99,25 @@ void startAccept(int sd)
 	}
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: set_sock_noblock
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Lewis Scott
+--
+-- PROGRAMMER: Lewis Scott
+--
+-- INTERFACE: void set_sock_noblock(int sd)
+--
+-- PARAMETERS:	int sd: The socket to set no-block on
+--
+-- RETURNS: void.
+--
+-- NOTES:
+----------------------------------------------------------------------------------------------------------------------*/
 void set_sock_noblock(int sd)
 {
 	int flags = fcntl(sd, F_GETFL, 0);
@@ -64,6 +125,26 @@ void set_sock_noblock(int sd)
 	fcntl(sd, F_SETFL, flags);
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: accept_client
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Lewis Scott
+--
+-- PROGRAMMER: Lewis Scott
+--
+-- INTERFACE: void accept_client(int i, int sd);
+--
+-- PARAMETERS:	int i:	The current iteration through the main loop: The next client to be added
+--				int sd:	The socket to accept from
+--
+-- RETURNS: void.
+--
+-- NOTES:
+----------------------------------------------------------------------------------------------------------------------*/
 void accept_client(int i, int sd)
 {
 	struct sockaddr_in client;
@@ -98,6 +179,25 @@ void accept_client(int i, int sd)
 	}
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: client_disconnect
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Lewis Scott
+--
+-- PROGRAMMER: Lewis Scott
+--
+-- INTERFACE: client_disconnect(int i);
+--
+-- PARAMETERS:	int i: The current iteration through the client select loop
+--
+-- RETURNS: void.
+--
+-- NOTES:
+----------------------------------------------------------------------------------------------------------------------*/
 void client_disconnect(int i)
 {
 	int j;
@@ -119,6 +219,25 @@ void client_disconnect(int i)
 	close(events[i].data.fd);
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: read_from_client
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Lewis Scott
+--
+-- PROGRAMMER: Lewis Scott
+--
+-- INTERFACE: int read_from_client(int i);
+--
+-- PARAMETERS:	int i: The index of the client to read from
+--
+-- RETURNS: int. Whether or not the client disconnected
+--
+-- NOTES:
+----------------------------------------------------------------------------------------------------------------------*/
 int read_from_client(int i)
 {
 	int count;
@@ -141,6 +260,28 @@ int read_from_client(int i)
 	return 0;
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: send_message
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Lewis Scott
+--
+-- PROGRAMMER: Lewis Scott
+--
+-- INTERFACE: void send_message(int fd, char type, char *data, int length);
+--
+-- PARAMETERS:	int fd:		The socket to send to
+--				char type:	The type of message to send
+--				char *data:	The data of the message
+--				int length:	The length of the data
+--
+-- RETURNS: void.
+--
+-- NOTES:
+----------------------------------------------------------------------------------------------------------------------*/
 void send_message(int fd, char type, char *data, int length)
 {
 	char *buf = (char*)malloc(length+1);
@@ -154,7 +295,28 @@ void send_message(int fd, char type, char *data, int length)
 	free(buf);
 }
 
-void handle_message(int fd, char* buf, int len)
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: handle_message
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Lewis Scott
+--
+-- PROGRAMMER: Lewis Scott
+--
+-- INTERFACE: handle_message(int fd, char *buf, int len)
+--
+-- PARAMETERS:	int fd:		The socket the message came from
+--				char *buf:	The message that was read
+--				int len:	The length of the message
+--
+-- RETURNS: void.
+--
+-- NOTES:
+----------------------------------------------------------------------------------------------------------------------*/
+void handle_message(int fd, char *buf, int len)
 {
 	char type = buf[0];
 	char d; // Index of client received from

@@ -1,3 +1,23 @@
+/*------------------------------------------------------------------------------------------------------------------
+-- SOURCE FILE: server.h - Main function for the server
+--
+-- PROGRAM: Thowis Scallentire Chat
+--
+-- FUNCTIONS:
+-- int main(int, char**);
+-- void end(int, char*);
+-- pid_t daemonize();
+-- void startListen();
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Lewis Scott
+--
+-- PROGRAMMER: Lewis Scott
+----------------------------------------------------------------------------------------------------------------------*/
+
 #ifndef SERVER_H
 #define SERVER_H
 

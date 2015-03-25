@@ -1,9 +1,49 @@
+/*------------------------------------------------------------------------------------------------------------------
+-- SOURCE FILE: server.c - Main function for the server
+--
+-- PROGRAM: Thowis Scallentire Chat
+--
+-- FUNCTIONS:
+-- int main(int, char**);
+-- void end(int, char*);
+-- pid_t daemonize();
+-- void startListen();
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Lewis Scott
+--
+-- PROGRAMMER: Lewis Scott
+----------------------------------------------------------------------------------------------------------------------*/
+
 #include "server.h"
 
 //#define DAEMON
 
 int sd, msq_id, shmem_id;
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: main
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Lewis Scott
+--
+-- PROGRAMMER: Lewis Scott
+--
+-- INTERFACE: int main(int argc, char *argv[])
+--
+-- PARAMETERS:	int argc:		The number of supplied arguments
+--				char *argv[]:	The suppied arguments
+--
+-- RETURNS: int. Program return status
+--
+-- NOTES:
+----------------------------------------------------------------------------------------------------------------------*/
 int main(int argc, char *argv[])
 {
 	#ifdef DAEMON
@@ -16,6 +56,26 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: end
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Lewis Scott
+--
+-- PROGRAMMER: Lewis Scott
+--
+-- INTERFACE: void end(int status, char *message)
+--
+-- PARAMETERS:	int status:		The status to return to the shell
+--				char *message:	The error message to display, if any
+--
+-- RETURNS: void.
+--
+-- NOTES:
+----------------------------------------------------------------------------------------------------------------------*/
 void end(int status, char *message)
 {
 	if(message != NULL)
@@ -31,6 +91,25 @@ void end(int status, char *message)
 	exit(status);
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: daemonize
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Lewis Scott
+--
+-- PROGRAMMER: Lewis Scott
+--
+-- INTERFACE: pid_t daemonize()
+--
+-- PARAMETERS:	void
+--
+-- RETURNS: pid_t. The session id of the daemon
+--
+-- NOTES:
+----------------------------------------------------------------------------------------------------------------------*/
 pid_t daemonize()
 {
 	pid_t pid;
@@ -61,6 +140,25 @@ pid_t daemonize()
 	return pid;
 }
 
+/*------------------------------------------------------------------------------------------------------------------
+-- FUNCTION: startListen
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Lewis Scott
+--
+-- PROGRAMMER: Lewis Scott
+--
+-- INTERFACE: void startListen()
+--
+-- PARAMETERS:	void
+--
+-- RETURNS: void.
+--
+-- NOTES:
+----------------------------------------------------------------------------------------------------------------------*/
 void startListen()
 {
 	struct sockaddr_in server;

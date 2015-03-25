@@ -1,3 +1,20 @@
+/*------------------------------------------------------------------------------------------------------------------
+-- SOURCE FILE: shared.c - Defines protocol-specific values
+--
+-- PROGRAM: Thowis Scallentire Chat
+--
+-- FUNCTIONS:
+--	none.
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Lewis Scott
+--
+-- PROGRAMMER: Lewis Scott
+----------------------------------------------------------------------------------------------------------------------*/
+
 #ifndef SHARED_H
 #define SHARED_H
 
