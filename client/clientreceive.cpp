@@ -1,9 +1,32 @@
+/*------------------------------------------------------------------------------------------------------------------
+-- SOURCE FILE: clientreceive.cpp - Client receiving class
+--
+-- PROGRAM: Thowis Scallentire Chat
+--
+-- FUNCTIONS:
+-- ClientReceive();
+-- ~ClientReceive();
+-- bool setNetwork(char *host, char *port);
+-- int getSocket();
+-- void setReceiving(bool);
+-- void init();
+-- void receive();
+-- void namechange(char *buf);
+-- void userRemove(char *buf);
+--
+-- DATE: March 24th, 2015
+--
+-- REVISIONS: (Date and Description)
+--
+-- DESIGNER: Thomas Tallentire
+--
+-- PROGRAMMER: Thomas Tallentire
+----------------------------------------------------------------------------------------------------------------------*/
+
 #include "clientreceive.h"
 
 ClientReceive::ClientReceive()
 {
-    moveToThread(&receiveThread);
-
     connect(&receiveThread, SIGNAL(finished()), SLOT(deleteLater()));
 
     connect(&receiveThread, SIGNAL(started()), SLOT(init()));
@@ -86,7 +109,6 @@ void ClientReceive::receive()
             emit userAdded(QString::fromLocal8Bit(receiveBuf));
             break;
         case (CHAT):
-            memcpy(receiveBuf,receiveBuf+1, BUFSIZE-1);
             str = QString::fromLocal8Bit(receiveBuf);
             emit textAdded(str);
             break;
@@ -156,8 +178,8 @@ void ClientReceive::userRemove(char *buf)
     emit userRemoved(pos);
 }
 
-void ClientReceive::setReceiving(bool val)
+void ClientReceive::setReceiving(bool val = false)
 {
-    printf("Set\n");
     receiving = val;
+    close(sd);
 }
