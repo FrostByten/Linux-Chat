@@ -50,7 +50,11 @@ struct epoll_event *events;
 ----------------------------------------------------------------------------------------------------------------------*/
 void startAccept(int sd)
 {
+	int so_reuseaddr = 1;
+
 	set_sock_noblock(sd);
+
+	setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &so_reuseaddr, sizeof(so_reuseaddr));
 
 	if((efd = epoll_create1(0)) == -1)
 	{
@@ -160,7 +164,7 @@ void accept_client(int i, int sd)
 	{
 		int l;
 		for(l = 0; l < current; ++l)
-			send_message(clients[current].fd, CONNECTION, inet_ntoa(client.sin_addr), strlen(inet_ntoa(client.sin_addr)));
+			send_message(clients[l].fd, CONNECTION, inet_ntoa(client.sin_addr), strlen(inet_ntoa(client.sin_addr)));
 
 		clients[current].nick = NULL;
 		clients[current].fd = client_sd;
@@ -177,8 +181,11 @@ void accept_client(int i, int sd)
 
 		current++;
 
-		for(l = 0; l < current - 1; ++l)
-			send_message(client_sd, CONNECTION, (clients[l].nick==NULL)?inet_ntoa(clients[l].addr.sin_addr):clients[l].nick, strlen((clients[l].nick==NULL)?inet_ntoa(clients[l].addr.sin_addr):clients[l].nick));
+		for(l = 0; l < current; ++l)
+		{
+			if(clients[l].fd != 0 && clients[l].fd != client_sd)
+				send_message(client_sd, CONNECTION, (clients[l].nick==NULL)?inet_ntoa(clients[l].addr.sin_addr):clients[l].nick, strlen((clients[l].nick==NULL)?inet_ntoa(clients[l].addr.sin_addr):clients[l].nick));
+		}
 	}
 }
 
@@ -307,8 +314,9 @@ int read_from_client(int i)
 ----------------------------------------------------------------------------------------------------------------------*/
 void send_message(int fd, char type, char *data, int length)
 {
-	char *buf = (char*)malloc(length+1);
+	char *buf = (char*)malloc(length+2);
 	buf[0] = type;
+	buf[length+1] = '\0';
 
 	memcpy(&buf[1], data, length);
 
@@ -344,9 +352,14 @@ void handle_message(int fd, char *buf, int len)
 	char type = buf[0];
 	char d; // Index of client received from
 
+	buf[len] = '\0';
+
 	for(d = 0; d < current; ++d)
 		if(clients[d].fd == fd)
+		{
 			buf[0] = d;
+			break;
+		}
 
 	switch(type)
 	{
@@ -366,6 +379,11 @@ void handle_message(int fd, char *buf, int len)
 			int to_whisp = buf[0];
 			buf[0] = d;
 
+			char *str = (char*)malloc(LOG_MAX);
+			sprintf(str, "Whispered \"%s\" to %s", (clients[to_whisp].nick==NULL)?inet_ntoa(clients[to_whisp].addr.sin_addr):clients[to_whisp].nick, buf + 1);
+			writeLog(str, buf[0]);
+			free(str);
+
 			if(to_whisp <= current)
 				send_message(clients[to_whisp].fd, WHISPER, buf, len);
 
@@ -373,13 +391,17 @@ void handle_message(int fd, char *buf, int len)
 		}
 		case NAME_CHANGE:
 		{
-			writeLog("Changed name", buf[0]);
+			char *str = (char*)malloc(LOG_MAX);
+			sprintf(str, "Changed name to \"%s\"", buf + 1);
+			writeLog(str, buf[0]);
+			free(str);
 
 			if(clients[d].nick != NULL)
 				free(clients[d].nick);
 
-			clients[d].nick = (char*)malloc(len-1);
-				memcpy(clients[d].nick, buf + 1, len - 1);
+			clients[d].nick = (char*)malloc(len);
+			memcpy(clients[d].nick, buf + 1, len - 1);
+			clients[d].nick[len] = '\0';
 
 			for(d = 0; d < current; ++d)
 			{
@@ -390,7 +412,13 @@ void handle_message(int fd, char *buf, int len)
 			break;
 		}
 		default:
+		{
+			char *str = (char*)malloc(LOG_MAX);
+			sprintf(str, "Received invalid command: %d", type);
+			writeLog(str, d);
+			free(str);
 			break;
+		}
 	}
 }
 
@@ -420,10 +448,12 @@ void writeLog(char *towrite, int idx)
 
 	char *str = (char*)malloc(LOG_MAX);
 
-	sprintf(str, "%d/%d/%d %d:%d:%d [%s]: %s\n", tm.tm_mon + 1, 
+	sprintf(str, "%d/%d/%d %d:%02d:%02d [%s]: %s\n", tm.tm_mon + 1, 
 		tm.tm_mday, tm.tm_year + 1900, tm.tm_hour, tm.tm_min, tm.tm_sec,
-		clients[idx].nick==NULL?inet_ntoa(clients[idx].addr.sin_addr):clients[idx].nick, towrite);
+		(clients[idx].nick==NULL)?inet_ntoa(clients[idx].addr.sin_addr):clients[idx].nick, towrite);
 
 	printf("%s", str);
 	write(flog, str, strlen(str));
+	free(str);
 }
+
