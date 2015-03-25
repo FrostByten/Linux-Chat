@@ -79,7 +79,6 @@ void ClientReceive::receive()
             emit textAdded(QString("Error, Receive failed"));
             break;
         }
-        printf("Text received %d\n", val);
         switch (receiveBuf[0])
         {
         case (CONNECTION):
@@ -100,8 +99,8 @@ void ClientReceive::receive()
             userRemove(receiveBuf);
             break;
         default:
+            // Stop the read function from repeating too fast
             sleep(1);
-            printf("Default\n");
         }
         memset(receiveBuf, 0, BUFSIZE);
     }
