@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     enc = new Encryption(this);
     users = new QString[BUFSIZE];
-    usersend = 1;
+    usersend = 0;
     connected = false;
     clientsend = new ClientSend(enc);
     clientreceive = new ClientReceive(enc);
@@ -137,6 +137,7 @@ void MainWindow::addtext(QString text)
     QString message;
     QByteArray ba;
     char *c;
+    int val;
 
     ba = text.toLocal8Bit();
 
@@ -151,11 +152,12 @@ void MainWindow::addtext(QString text)
     if (c[0] == CHAT)
     {
         memcpy(c, c+1, (text.size()-1)/sizeof(char));
-        message = users[(int)c[1]];
+        val = (int)c[0];
+        message = users[val];
         memcpy(c, c+1, (text.size()-2)/sizeof(char));
         enc->decrypt(c);
         c[text.size()-2] = '\0';
-        message += "\t" + QString::fromLocal8Bit(c);
+        message += " :\t" + QString::fromLocal8Bit(c);
         text = message;
     }
 

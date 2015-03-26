@@ -238,8 +238,11 @@ void ClientReceive::receive()
             break;
         case (DISCONNECTION):
             memcpy(receiveBuf,receiveBuf+1, BUFSIZE-1);
-            enc->decrypt(receiveBuf);
             userRemove(receiveBuf);
+            break;
+        case (DEAD_CONNECTION):
+            memcpy(receiveBuf,receiveBuf+1, BUFSIZE-1);
+            emit userAdded(QString("\0"));
             break;
         default:
             // Stop the read function from repeating too fast
