@@ -85,6 +85,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->listView_2->setModel(usermodel);
     ui->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->listView_2->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    ui->plainTextEdit->appendPlainText(QString("192.168.0.4"));
+    ui->plainTextEdit_2->appendPlainText(QString("5156"));
+
+    ui->textEdit->installEventFilter(new EnterCatch(this));
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -187,7 +192,15 @@ void MainWindow::addtext(QString text)
 ----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::adduser(QString name)
 {
-    users[usersend++] = name;
+    QByteArray ba;
+    char *c;
+
+    ba = name.toLocal8Bit();
+    c = ba.data();
+
+    printf("Add user: %d - %s\n", usersend, c);
+    users[usersend] = name;
+    usersend++;
     refreshUsers();
 }
 
@@ -213,6 +226,7 @@ void MainWindow::adduser(QString name)
 ----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::removeuser(int pos)
 {
+    printf("Remove user: %d\n", pos);
     users[pos] = "\0";
     refreshUsers();
 }
@@ -240,6 +254,7 @@ void MainWindow::removeuser(int pos)
 ----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::changeuser(QString name, int pos)
 {
+    printf("Change user: %d\n", pos);
     users[pos] = name;
     refreshUsers();
 }
@@ -418,4 +433,9 @@ void MainWindow::on_disconnectButton_clicked()
 void MainWindow::on_pushButton_clicked()
 {
     enc->exec();
+}
+
+void MainWindow::on_textEdit_textChanged()
+{
+
 }

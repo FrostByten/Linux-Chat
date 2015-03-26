@@ -167,6 +167,7 @@ void ClientSend::sendtext(QString text)
     c = ba.data();
     if (sending)
     {
+        printf("Sending: %s", c);
         ::send(sd, c, text.size(), 0);
     }
     else

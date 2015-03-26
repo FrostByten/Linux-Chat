@@ -17,13 +17,15 @@ SOURCES += main.cpp\
     clientsend.cpp \
     clientreceive.cpp \
     encryption.cpp \
-    enc.cpp
+    enc.cpp \
+    entercatch.cpp
 
 HEADERS  += mainwindow.h \
     clientsend.h \
     clientreceive.h \
     encryption.h \
-    enc.h
+    enc.h \
+    entercatch.h
 
 FORMS    += mainwindow.ui \
     encryption.ui

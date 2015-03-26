@@ -222,6 +222,7 @@ void ClientReceive::receive()
             emit textAdded(QString("Error, Receive failed"));
             break;
         }
+
         switch (receiveBuf[0])
         {
         case (CONNECTION):
@@ -229,6 +230,7 @@ void ClientReceive::receive()
             emit userAdded(QString::fromLocal8Bit(receiveBuf));
             break;
         case (CHAT):
+            printf("Chat Received\n");
             str = QString::fromLocal8Bit(receiveBuf);
             emit textAdded(str);
             break;
@@ -307,26 +309,10 @@ void ClientReceive::namechange(char *buf)
 ----------------------------------------------------------------------------------------------------------------------*/
 void ClientReceive::userRemove(char *buf)
 {
-    QString str = str = QString::fromLocal8Bit(buf);
     int pos = -1;
-    std::string value = "";
 
-    for (QString::iterator it = str.begin(); it != str.end(); it++)
-    {
-        if (it == NULL)
-        {
-            pos = atoi(value.c_str());
-            break;
-        }
-        if (*it != ' ')
-        {
-            value += (*it).toLatin1();
-        }
-        else
-        {
-            pos = atoi(value.c_str());
-        }
-    }
+    pos = (int)buf[0];
+
     emit userRemoved(pos);
 }
 
