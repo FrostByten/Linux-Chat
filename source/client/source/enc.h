@@ -1,3 +1,6 @@
+#ifndef ENC
+#define ENC
+
 /*------------------------------------------------------------------------------------------------------------------
 -- SOURCE FILE: enc.h - Applies pseudo-encryption to a buffer of characters
 --
@@ -22,4 +25,10 @@
 #define MAX_BUF 256
 #define CHAR_BITS 8
 
-void encrypt(char*, int, char*, int, char*, int); 
+namespace enc
+{
+    void encrypt_text(char*, int, char*, int, char*, int);
+}
+
+#endif // ENC
+

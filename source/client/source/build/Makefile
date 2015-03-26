@@ -137,9 +137,9 @@ DIST          = /usr/lib64/qt5/mkspecs/features/spec_pre.prf \
 		../encryption.cpp \
 		../enc.cpp \
 		../entercatch.cpp
-QMAKE_TARGET  = test
+QMAKE_TARGET  = client
 DESTDIR       = #avoid trailing-slash linebreak
-TARGET        = test
+TARGET        = client
 
 
 first: all

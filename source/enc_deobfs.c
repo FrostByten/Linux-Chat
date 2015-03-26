@@ -16,7 +16,7 @@
 	printf("De-coded string:  %s\n", str);
 }*/
 
-void encrypt_text(char *buffer, int len, char *key, int k_len, char *key2, int k2_len)
+int encrypt(char *buffer, int len, char *key, int k_len, char *key2, int k2_len)
 {
 	int k1 = 0;
 	int k2 = 0;
