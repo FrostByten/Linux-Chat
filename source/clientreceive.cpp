@@ -222,6 +222,7 @@ void ClientReceive::receive()
 
     while(receiving)
     {
+        str = "\0";
         if ((val = read(sd, receiveBuf, BUFSIZE)) == -1)
         {
             emit textAdded(QString("Error, Receive failed"));
@@ -247,7 +248,7 @@ void ClientReceive::receive()
             {
                 c = receiveBuf[1];
                 memcpy(receiveBuf, receiveBuf+2, BUFSIZE-3);
-                str += CHAT;
+                str = CHAT;
                 str += c;
             }
             str += QString::fromLocal8Bit(receiveBuf);
