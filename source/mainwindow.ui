@@ -22,7 +22,7 @@
      <rect>
       <x>820</x>
       <y>560</y>
-      <width>95</width>
+      <width>151</width>
       <height>41</height>
      </rect>
     </property>
@@ -63,9 +63,9 @@ background-color:#c39797;</string>
     <property name="geometry">
      <rect>
       <x>170</x>
-      <y>110</y>
+      <y>40</y>
       <width>621</width>
-      <height>421</height>
+      <height>491</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -82,8 +82,8 @@ background-color:white;</string>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>80</y>
+      <x>30</x>
+      <y>10</y>
       <width>101</width>
       <height>21</height>
      </rect>
@@ -95,8 +95,8 @@ background-color:white;</string>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>850</x>
-      <y>150</y>
+      <x>860</x>
+      <y>10</y>
       <width>71</width>
       <height>21</height>
      </rect>
@@ -108,8 +108,8 @@ background-color:white;</string>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>850</x>
-      <y>240</y>
+      <x>860</x>
+      <y>100</y>
       <width>91</width>
       <height>21</height>
      </rect>
@@ -122,7 +122,7 @@ background-color:white;</string>
     <property name="geometry">
      <rect>
       <x>850</x>
-      <y>340</y>
+      <y>200</y>
       <width>95</width>
       <height>31</height>
      </rect>
@@ -134,8 +134,8 @@ background-color:white;</string>
    <widget class="QPlainTextEdit" name="plainTextEdit">
     <property name="geometry">
      <rect>
-      <x>810</x>
-      <y>180</y>
+      <x>820</x>
+      <y>40</y>
       <width>161</width>
       <height>41</height>
      </rect>
@@ -149,8 +149,8 @@ background-color:white;
    <widget class="QPlainTextEdit" name="plainTextEdit_2">
     <property name="geometry">
      <rect>
-      <x>810</x>
-      <y>270</y>
+      <x>820</x>
+      <y>130</y>
       <width>161</width>
       <height>41</height>
      </rect>
@@ -164,7 +164,7 @@ background-color:white;</string>
     <property name="geometry">
      <rect>
       <x>850</x>
-      <y>390</y>
+      <y>250</y>
       <width>95</width>
       <height>31</height>
      </rect>
@@ -177,9 +177,9 @@ background-color:white;</string>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>110</y>
+      <y>40</y>
       <width>131</width>
-      <height>421</height>
+      <height>491</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -190,8 +190,8 @@ background-color:white;</string>
    <widget class="QPlainTextEdit" name="plainTextEdit_3">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>30</y>
+      <x>820</x>
+      <y>350</y>
       <width>161</width>
       <height>41</height>
      </rect>
@@ -204,8 +204,8 @@ background-color:white;</string>
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>60</x>
-      <y>0</y>
+      <x>860</x>
+      <y>320</y>
       <width>81</width>
       <height>21</height>
      </rect>
@@ -217,8 +217,8 @@ background-color:white;</string>
    <widget class="QPushButton" name="setnameButton">
     <property name="geometry">
      <rect>
-      <x>200</x>
-      <y>30</y>
+      <x>850</x>
+      <y>410</y>
       <width>101</width>
       <height>31</height>
      </rect>
@@ -230,8 +230,8 @@ background-color:white;</string>
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>820</x>
-      <y>10</y>
+      <x>830</x>
+      <y>500</y>
       <width>141</width>
       <height>31</height>
      </rect>
@@ -241,7 +241,7 @@ background-color:white;</string>
 background-color:white;</string>
     </property>
     <property name="text">
-     <string>Encyption Settings</string>
+     <string>Encryption Settings</string>
     </property>
    </widget>
   </widget>

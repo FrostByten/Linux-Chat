@@ -105,9 +105,7 @@ void ClientReceive::init()
         perror("Cannot create socket");
         exit(1);
     }
-    /*flags = fcntl(sd, F_GETFL, 0);
-    flags &= !O_NONBLOCK;
-    fcntl(sd, F_SETFL, flags);*/
+
     if (::connect (sd, (struct sockaddr *)&server, (socklen_t)sizeof(server)) == -1)
     {
         fprintf(stderr, "Can't connect to server\n");
@@ -228,7 +226,6 @@ void ClientReceive::receive()
         {
         case (CONNECTION):
             memcpy(receiveBuf,receiveBuf+1, BUFSIZE-1);
-            enc->decrypt(receiveBuf);
             emit userAdded(QString::fromLocal8Bit(receiveBuf));
             break;
         case (CHAT):
@@ -237,7 +234,6 @@ void ClientReceive::receive()
             break;
         case (NAME_CHANGE):
             memcpy(receiveBuf,receiveBuf+1, BUFSIZE-1);
-            enc->decrypt(receiveBuf);
             namechange(receiveBuf);
             break;
         case (DISCONNECTION):
