@@ -102,12 +102,13 @@ ClientReceive::~ClientReceive()
 ----------------------------------------------------------------------------------------------------------------------*/
 void ClientReceive::init()
 {
+    int throwaway = 0;
     if ((sd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
         perror("Cannot create socket");
         exit(1);
     }
-    printf("Connected\n");
+    ioctl(sd, FIONBIO, &throwaway);
     if (::connect (sd, (struct sockaddr *)&server, (socklen_t)sizeof(server)) == -1)
     {
         fprintf(stderr, "Can't connect to server\n");
@@ -215,12 +216,13 @@ int ClientReceive::getSocket()
 void ClientReceive::receive()
 {
     char receiveBuf[BUFSIZE];
-    QString str;
+    QString str = "";
     int val;
+    char c;
 
     while(receiving)
     {
-        if ((val = read(sd, receiveBuf, BUFSIZE)) /*(sd, receiveBuf, BUFSIZE, 0))*/ == -1)
+        if ((val = read(sd, receiveBuf, BUFSIZE)) == -1)
         {
             emit textAdded(QString("Error, Receive failed"));
             break;
@@ -233,8 +235,22 @@ void ClientReceive::receive()
             emit userAdded(QString::fromLocal8Bit(receiveBuf));
             break;
         case (CHAT):
-            printf("Chat Received\n");
-            str = QString::fromLocal8Bit(receiveBuf);
+            if (receiveBuf[2] == '\0')
+            {
+                if ((val = read(sd, receiveBuf, BUFSIZE)) == -1)
+                {
+                    emit textAdded(QString("Error, Receive failed"));
+                    break;
+                }
+            }
+            if (receiveBuf[1] == '\0')
+            {
+                c = receiveBuf[1];
+                memcpy(receiveBuf, receiveBuf+2, BUFSIZE-3);
+                str += CHAT;
+                str += c;
+            }
+            str += QString::fromLocal8Bit(receiveBuf);
             emit textAdded(str);
             break;
         case (NAME_CHANGE):
@@ -249,6 +265,8 @@ void ClientReceive::receive()
             memcpy(receiveBuf,receiveBuf+1, BUFSIZE-1);
             emit userAdded(QString("\0"));
             break;
+        default:
+            printf("Repeating");
         }
         memset(receiveBuf, 0, BUFSIZE);
     }

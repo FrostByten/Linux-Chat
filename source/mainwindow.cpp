@@ -157,6 +157,8 @@ void MainWindow::addtext(QString text)
 
     if (c[0] == CHAT)
     {
+        if (c[2] == '\0')
+            return;
         memcpy(c, c+1, (text.size()-1)/sizeof(char));
         val = (int)c[0];
         message = users[val];
@@ -193,13 +195,6 @@ void MainWindow::addtext(QString text)
 ----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::adduser(QString name)
 {
-    QByteArray ba;
-    char *c;
-
-    ba = name.toLocal8Bit();
-    c = ba.data();
-
-    printf("Add user: %d - %s\n", usersend, c);
     users[usersend] = name;
     usersend++;
     refreshUsers();
@@ -227,7 +222,6 @@ void MainWindow::adduser(QString name)
 ----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::removeuser(int pos)
 {
-    printf("Remove user: %d\n", pos);
     users[pos] = "\0";
     refreshUsers();
 }
@@ -255,7 +249,6 @@ void MainWindow::removeuser(int pos)
 ----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::changeuser(QString name, int pos)
 {
-    printf("Change user: %d\n", pos);
     users[pos] = name;
     refreshUsers();
 }
