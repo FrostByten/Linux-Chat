@@ -48,6 +48,8 @@
 ClientReceive::ClientReceive(Encryption *e)
 {
     enc = e;
+
+
     connect(&receiveThread, SIGNAL(finished()), SLOT(deleteLater()));
 
     connect(&receiveThread, SIGNAL(started()), SLOT(init()));
@@ -105,7 +107,7 @@ void ClientReceive::init()
         perror("Cannot create socket");
         exit(1);
     }
-
+    printf("Connected\n");
     if (::connect (sd, (struct sockaddr *)&server, (socklen_t)sizeof(server)) == -1)
     {
         fprintf(stderr, "Can't connect to server\n");
@@ -157,8 +159,9 @@ bool ClientReceive::setNetwork(char *host, char *port)
         return false;
     }
     bcopy(hp->h_addr, (char *)&server.sin_addr, hp->h_length);
-    if (!receiveThread.isRunning())
-        receiveThread.start();
+
+    receiveThread.start();
+
     return true;
 }
 
@@ -246,13 +249,10 @@ void ClientReceive::receive()
             memcpy(receiveBuf,receiveBuf+1, BUFSIZE-1);
             emit userAdded(QString("\0"));
             break;
-        default:
-            // Stop the read function from repeating too fast
-            sleep(1);
         }
         memset(receiveBuf, 0, BUFSIZE);
     }
-    close(sd);
+    shutdown(sd, SHUT_RDWR);
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -339,5 +339,5 @@ void ClientReceive::userRemove(char *buf)
 void ClientReceive::setReceiving(bool val = false)
 {
     receiving = val;
-    close(sd);
+    shutdown(sd, SHUT_RDWR);
 }

@@ -38,8 +38,6 @@ private slots:
 
     void changeuser(QString, int);
 
-    //void on_sendButton_clicked();
-
     void on_networkButton_clicked();
 
     void on_setnameButton_clicked();
@@ -47,8 +45,6 @@ private slots:
     void on_disconnectButton_clicked();
 
     void on_pushButton_clicked();
-
-    void on_textEdit_textChanged();
 
 public slots:
     void on_sendButton_clicked();

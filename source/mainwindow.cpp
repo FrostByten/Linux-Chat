@@ -81,6 +81,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     chatmodel = new QStandardItemModel();
     usermodel = new QStandardItemModel();
+
     ui->listView->setModel(chatmodel);
     ui->listView_2->setModel(usermodel);
     ui->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -361,10 +362,13 @@ void MainWindow::on_networkButton_clicked()
 
     c = ba.data();
     c1 = ba1.data();
+
+
     if (!(clientsend->setNetwork(c, c1)) || !(clientreceive->setNetwork(c, c1)))
     {
         chatmodel->appendRow(new QStandardItem(QString("Invalid Network Info") ));
     }
+
     clientreceive->moveToThread(&(clientreceive->receiveThread));
     ui->networkButton->setEnabled(false);
     ui->disconnectButton->setEnabled(true);
@@ -425,9 +429,11 @@ void MainWindow::on_setnameButton_clicked()
 ----------------------------------------------------------------------------------------------------------------------*/
 void MainWindow::on_disconnectButton_clicked()
 {
-    ui->networkButton->setEnabled(true);
+
     connected = false;
     clientreceive->setReceiving(false);
+    usersend = 0;
+    ui->networkButton->setEnabled(true);
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -435,7 +441,3 @@ void MainWindow::on_pushButton_clicked()
     enc->exec();
 }
 
-void MainWindow::on_textEdit_textChanged()
-{
-
-}
