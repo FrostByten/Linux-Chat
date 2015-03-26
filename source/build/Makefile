@@ -53,20 +53,24 @@ SOURCES       = ../main.cpp \
 		../clientsend.cpp \
 		../clientreceive.cpp \
 		../encryption.cpp \
-		../enc.cpp moc_mainwindow.cpp \
+		../enc.cpp \
+		../entercatch.cpp moc_mainwindow.cpp \
 		moc_clientsend.cpp \
 		moc_clientreceive.cpp \
-		moc_encryption.cpp
+		moc_encryption.cpp \
+		moc_entercatch.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		clientsend.o \
 		clientreceive.o \
 		encryption.o \
 		enc.o \
+		entercatch.o \
 		moc_mainwindow.o \
 		moc_clientsend.o \
 		moc_clientreceive.o \
-		moc_encryption.o
+		moc_encryption.o \
+		moc_entercatch.o
 DIST          = /usr/lib64/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib64/qt5/mkspecs/common/shell-unix.conf \
 		/usr/lib64/qt5/mkspecs/common/unix.conf \
@@ -125,12 +129,14 @@ DIST          = /usr/lib64/qt5/mkspecs/features/spec_pre.prf \
 		../clientsend.h \
 		../clientreceive.h \
 		../encryption.h \
-		../enc.h ../main.cpp \
+		../enc.h \
+		../entercatch.h ../main.cpp \
 		../mainwindow.cpp \
 		../clientsend.cpp \
 		../clientreceive.cpp \
 		../encryption.cpp \
-		../enc.cpp
+		../enc.cpp \
+		../entercatch.cpp
 QMAKE_TARGET  = test
 DESTDIR       = #avoid trailing-slash linebreak
 TARGET        = test
@@ -292,8 +298,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ../mainwindow.h ../clientsend.h ../clientreceive.h ../encryption.h ../enc.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../main.cpp ../mainwindow.cpp ../clientsend.cpp ../clientreceive.cpp ../encryption.cpp ../enc.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../mainwindow.h ../clientsend.h ../clientreceive.h ../encryption.h ../enc.h ../entercatch.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../main.cpp ../mainwindow.cpp ../clientsend.cpp ../clientreceive.cpp ../encryption.cpp ../enc.cpp ../entercatch.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../mainwindow.ui ../encryption.ui $(DISTDIR)/
 
 
@@ -317,15 +323,16 @@ check: first
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: moc_mainwindow.cpp moc_clientsend.cpp moc_clientreceive.cpp moc_encryption.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_clientsend.cpp moc_clientreceive.cpp moc_encryption.cpp moc_entercatch.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp moc_clientsend.cpp moc_clientreceive.cpp moc_encryption.cpp
+	-$(DEL_FILE) moc_mainwindow.cpp moc_clientsend.cpp moc_clientreceive.cpp moc_encryption.cpp moc_entercatch.cpp
 moc_mainwindow.cpp: ../clientsend.h \
 		../mainwindow.h \
 		../clientreceive.h \
 		../encryption.h \
 		../enc.h \
 		../shared.h \
+		../entercatch.h \
 		../mainwindow.h
 	/usr/lib64/qt5/bin/moc $(DEFINES) -I/usr/lib64/qt5/mkspecs/linux-g++ -I/root/Documents/linux-chat/client/source -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I/usr/include/c++/4.9.2 -I/usr/include/c++/4.9.2/x86_64-redhat-linux -I/usr/include/c++/4.9.2/backward -I/usr/lib/gcc/x86_64-redhat-linux/4.9.2/include -I/usr/local/include -I/usr/include ../mainwindow.h -o moc_mainwindow.cpp
 
@@ -335,6 +342,7 @@ moc_clientsend.cpp: ../mainwindow.h \
 		../enc.h \
 		../clientreceive.h \
 		../shared.h \
+		../entercatch.h \
 		../clientsend.h
 	/usr/lib64/qt5/bin/moc $(DEFINES) -I/usr/lib64/qt5/mkspecs/linux-g++ -I/root/Documents/linux-chat/client/source -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I/usr/include/c++/4.9.2 -I/usr/include/c++/4.9.2/x86_64-redhat-linux -I/usr/include/c++/4.9.2/backward -I/usr/lib/gcc/x86_64-redhat-linux/4.9.2/include -I/usr/local/include -I/usr/include ../clientsend.h -o moc_clientsend.cpp
 
@@ -344,12 +352,23 @@ moc_clientreceive.cpp: ../mainwindow.h \
 		../enc.h \
 		../clientreceive.h \
 		../shared.h \
+		../entercatch.h \
 		../clientreceive.h
 	/usr/lib64/qt5/bin/moc $(DEFINES) -I/usr/lib64/qt5/mkspecs/linux-g++ -I/root/Documents/linux-chat/client/source -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I/usr/include/c++/4.9.2 -I/usr/include/c++/4.9.2/x86_64-redhat-linux -I/usr/include/c++/4.9.2/backward -I/usr/lib/gcc/x86_64-redhat-linux/4.9.2/include -I/usr/local/include -I/usr/include ../clientreceive.h -o moc_clientreceive.cpp
 
 moc_encryption.cpp: ../enc.h \
 		../encryption.h
 	/usr/lib64/qt5/bin/moc $(DEFINES) -I/usr/lib64/qt5/mkspecs/linux-g++ -I/root/Documents/linux-chat/client/source -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I/usr/include/c++/4.9.2 -I/usr/include/c++/4.9.2/x86_64-redhat-linux -I/usr/include/c++/4.9.2/backward -I/usr/lib/gcc/x86_64-redhat-linux/4.9.2/include -I/usr/local/include -I/usr/include ../encryption.h -o moc_encryption.cpp
+
+moc_entercatch.cpp: ../mainwindow.h \
+		../clientsend.h \
+		../encryption.h \
+		../enc.h \
+		../clientreceive.h \
+		../shared.h \
+		../entercatch.h \
+		../entercatch.h
+	/usr/lib64/qt5/bin/moc $(DEFINES) -I/usr/lib64/qt5/mkspecs/linux-g++ -I/root/Documents/linux-chat/client/source -I/usr/include/qt5 -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I. -I/usr/include/c++/4.9.2 -I/usr/include/c++/4.9.2/x86_64-redhat-linux -I/usr/include/c++/4.9.2/backward -I/usr/lib/gcc/x86_64-redhat-linux/4.9.2/include -I/usr/local/include -I/usr/include ../entercatch.h -o moc_entercatch.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -377,7 +396,8 @@ main.o: ../main.cpp ../mainwindow.h \
 		../encryption.h \
 		../enc.h \
 		../clientreceive.h \
-		../shared.h
+		../shared.h \
+		../entercatch.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../main.cpp
 
 mainwindow.o: ../mainwindow.cpp ../mainwindow.h \
@@ -386,6 +406,7 @@ mainwindow.o: ../mainwindow.cpp ../mainwindow.h \
 		../enc.h \
 		../clientreceive.h \
 		../shared.h \
+		../entercatch.h \
 		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../mainwindow.cpp
 
@@ -394,7 +415,8 @@ clientsend.o: ../clientsend.cpp ../clientsend.h \
 		../clientreceive.h \
 		../encryption.h \
 		../enc.h \
-		../shared.h
+		../shared.h \
+		../entercatch.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o clientsend.o ../clientsend.cpp
 
 clientreceive.o: ../clientreceive.cpp ../clientreceive.h \
@@ -402,7 +424,8 @@ clientreceive.o: ../clientreceive.cpp ../clientreceive.h \
 		../clientsend.h \
 		../encryption.h \
 		../enc.h \
-		../shared.h
+		../shared.h \
+		../entercatch.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o clientreceive.o ../clientreceive.cpp
 
 encryption.o: ../encryption.cpp ../encryption.h \
@@ -412,6 +435,15 @@ encryption.o: ../encryption.cpp ../encryption.h \
 
 enc.o: ../enc.cpp ../enc.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o enc.o ../enc.cpp
+
+entercatch.o: ../entercatch.cpp ../entercatch.h \
+		../mainwindow.h \
+		../clientsend.h \
+		../encryption.h \
+		../enc.h \
+		../clientreceive.h \
+		../shared.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o entercatch.o ../entercatch.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
@@ -424,6 +456,9 @@ moc_clientreceive.o: moc_clientreceive.cpp
 
 moc_encryption.o: moc_encryption.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_encryption.o moc_encryption.cpp
+
+moc_entercatch.o: moc_entercatch.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_entercatch.o moc_entercatch.cpp
 
 ####### Install
 
