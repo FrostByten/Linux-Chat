@@ -83,6 +83,8 @@ MainWindow::MainWindow(QWidget *parent) :
     usermodel = new QStandardItemModel();
     ui->listView->setModel(chatmodel);
     ui->listView_2->setModel(usermodel);
+    ui->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->listView_2->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 
 /*------------------------------------------------------------------------------------------------------------------
@@ -149,9 +151,10 @@ void MainWindow::addtext(QString text)
     if (c[0] == CHAT)
     {
         memcpy(c, c+1, (text.size()-1)/sizeof(char));
-        enc->decrypt(c);
         message = users[(int)c[1]];
         memcpy(c, c+1, (text.size()-2)/sizeof(char));
+        enc->decrypt(c);
+        c[text.size()-2] = '\0';
         message += "\t" + QString::fromLocal8Bit(c);
         text = message;
     }
